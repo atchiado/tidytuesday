@@ -80,7 +80,7 @@ ggplot(grouped_rq_data %>% filter(group != "other"),
   labs(title = "5-Year Consumer Rating Trends",
        subtitle = "The chart visualizes changes in consumer RQ Rating for America's 100 most prominent companies over the last five years, with notable companies
 highlighted. RQ Rating is a measure of the Axios Harris Poll 100, which is published by Axios annually as a way of gauging public market perceptions.
-A higher rating indicates a more positive perception.",
-       caption = "Visualization by Anthony Chiado  •  Data by Axios and Harris  •  Created for R4DS #tidytuesday")
+Social media companies are viewed poorly by the public in comparison to other notable tech companies.",
+       caption = "Visualization: Anthony Chiado  •  Data: Axios and Harris  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
 
 
