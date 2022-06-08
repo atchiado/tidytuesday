@@ -29,8 +29,8 @@ grouped_companies <- top_companies %>%
                               group = as.factor(group))
 
 # Order data decreasing by contribution amount
-grouped_companies$Company <- factor(top_companies$Company,
-                                    levels = top_companies$Company[order(top_companies$Contributions)])
+grouped_companies$Company <- factor(grouped_companies$Company,
+                                    levels = grouped_companies$Company[order(grouped_companies$Contributions)])
 
 
 ## Create viz ---------------
@@ -62,16 +62,16 @@ theme_update(axis.title = element_blank(),
 ggplot(grouped_companies %>% filter(group != "other"),
        aes(x = Contributions, y = Company, group = Company)) +
   geom_col(data = grouped_companies %>% filter(group == "other"), width = 0.6, fill = "grey50") +
-  geom_col(aes(fill = group), width = 0.6) +
+  geom_col(data = grouped_companies, aes(fill = group), width = 0.6) +
   scale_x_continuous(limits = c(0, 650000), breaks = seq(0, 650000, by = 50000), 
                      expand = c(0, 0), position = "top") +
   scale_y_discrete(expand = expansion(add = c(0, 0.5))) +
   scale_color_manual(values = c(rcartocolor::carto_pal(n = 6, name = "Prism"), "grey50")) +
-  geom_shadowtext(data = subset(top_companies, Contributions < 250000),
+  geom_shadowtext(data = subset(grouped_companies, Contributions < 650000),
                   aes(Contributions, y = Company, label = Company),
                   hjust = 0, nudge_x = 4000, color = "grey40", bg.color = "grey98",
                   bg.r = 0.5, family = "Lato", size = 4) + 
-  geom_text(data = subset(top_companies, Contributions >= 250000),
+  geom_text(data = subset(grouped_companies, Contributions >= 250000),
             aes(0, y = Company, label = Company), hjust = 0, nudge_x = 4000,
             color = "white", family = "Lato", size = 4) +
   labs(title = "Rainbow Capitalism",
