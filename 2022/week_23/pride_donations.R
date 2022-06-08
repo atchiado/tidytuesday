@@ -20,20 +20,15 @@ top_companies <- static_list %>%
                           Pride = 'Pride?') %>% 
                    subset(Contributions >= 70000 & Company!="Grand Total")
 
-# Define pride companies to be highlighted on graph
-highlights <- c("Toyota", "AT&T", "Comcast", "Amazon", "FedEx", "State Farm")
-
-# Create group column to identify highlighted vars
-grouped_companies <- top_companies %>%
-                       mutate(group = if_else(Company %in% highlights, Company, "other"),
-                              group = as.factor(group))
-
 # Order data decreasing by contribution amount
 grouped_companies$Company <- factor(grouped_companies$Company,
                                     levels = grouped_companies$Company[order(grouped_companies$Contributions)])
 
 
 ## Create viz ---------------
+# Highlights
+pallette <- c()
+
 # Set theme
 theme_set(theme_minimal(base_family = "Lato"))
 
@@ -46,11 +41,11 @@ theme_update(axis.title = element_blank(),
              axis.ticks.length = unit(0, "mm"),
              axis.line.y.left = element_line(color = "black"),
              axis.text.y = element_blank(),
-             axis.text.x = element_text(family = "Lato", size = 6),
+             axis.text.x = element_text(family = "Lato", size = 8),
              plot.margin = margin(10, 40, 20, 40),
              plot.title = element_text(color = "grey10", size = 25, face = "bold",
                                        margin = margin(t = 15)),
-             plot.subtitle = element_markdown(color = "grey30", size = 12, lineheight = 1.35,
+             plot.subtitle = element_text(color = "grey30", size = 12, lineheight = 1.35,
                                               margin = margin(t = 10, b = 20)),
              plot.title.position = "plot",
              plot.caption.position = "plot",
@@ -59,22 +54,17 @@ theme_update(axis.title = element_blank(),
              legend.position = "none")
   
 # Plot data
-ggplot(grouped_companies %>% filter(group != "other"),
-       aes(x = Contributions, y = Company, group = Company)) +
-  geom_col(data = grouped_companies %>% filter(group == "other"), width = 0.6, fill = "grey50") +
-  geom_col(data = grouped_companies, aes(fill = group), width = 0.6) +
-  scale_x_continuous(limits = c(0, 650000), breaks = seq(0, 650000, by = 50000), 
-                     expand = c(0, 0), position = "top") +
+ggplot(grouped_companies, aes(x = Contributions, y = Company, fill = Pride)) +
+  geom_col(width = 0.6) +
+  scale_x_continuous(limits = c(0, 650000), breaks = seq(0, 650000, by = 100000), 
+                     expand = c(0, 0), labels = scales::label_dollar(), position = "top") +
   scale_y_discrete(expand = expansion(add = c(0, 0.5))) +
-  scale_color_manual(values = c(rcartocolor::carto_pal(n = 6, name = "Prism"), "grey50")) +
+  scale_fill_manual(values = c("TRUE" = "#dc71fa", "FALSE" = "grey60")) +
   geom_shadowtext(data = subset(grouped_companies, Contributions < 650000),
                   aes(Contributions, y = Company, label = Company),
                   hjust = 0, nudge_x = 4000, color = "grey40", bg.color = "grey98",
                   bg.r = 0.5, family = "Lato", size = 4) + 
-  geom_text(data = subset(grouped_companies, Contributions >= 250000),
-            aes(0, y = Company, label = Company), hjust = 0, nudge_x = 4000,
-            color = "white", family = "Lato", size = 4) +
   labs(title = "Rainbow Capitalism",
-       subtitle = "Graph depicts the top donators to anti-LGBTQ politicians by Pride-supporting and non Pride-supporting companies",
+       subtitle = "Graph depicts the top donators to anti-LGBTQ politicians by <span style = 'color: #dc71fa;'>**Pride-supporting**</span> and <span style = 'color: grey60;'>**non Pride-supporting**</span> companies",
        caption = "Visualization: Anthony Chiado  •  Data: Data For Progress  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
   
