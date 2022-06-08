@@ -34,14 +34,6 @@ grouped_companies$Company <- factor(top_companies$Company,
 
 
 ## Create viz ---------------
-# Define pride companies to be highlighted on graph
-highlights <- c("Toyota", "AT&T", "Comcast", "Amazon", "FedEx", "State Farm")
-
-# Create group column to identify highlighted vars
-grouped_companies <- top_companies %>%
-                       mutate(group = if_else(Company %in% highlights, Company, "other"),
-                              group = as.factor(group))
-
 # Set theme
 theme_set(theme_minimal(base_family = "Lato"))
 
@@ -63,14 +55,18 @@ theme_update(axis.title = element_blank(),
              plot.title.position = "plot",
              plot.caption.position = "plot",
              plot.caption = element_text(color = "grey30", size = 8, lineheight = 1.2, 
-                                         hjust = 0, margin = margin(t = 20)))
+                                         hjust = 0, margin = margin(t = 20)),
+             legend.position = "none")
   
 # Plot data
-ggplot(top_companies, aes(x = Contributions, y = Company)) +
-  geom_col(width = 0.6) +
+ggplot(grouped_companies %>% filter(group != "other"),
+       aes(x = Contributions, y = Company, group = Company)) +
+  geom_col(data = grouped_companies %>% filter(group == "other"), width = 0.6, fill = "grey50") +
+  geom_col(aes(fill = group), width = 0.6) +
   scale_x_continuous(limits = c(0, 650000), breaks = seq(0, 650000, by = 50000), 
                      expand = c(0, 0), position = "top") +
   scale_y_discrete(expand = expansion(add = c(0, 0.5))) +
+  scale_color_manual(values = c(rcartocolor::carto_pal(n = 6, name = "Prism"), "grey50")) +
   geom_shadowtext(data = subset(top_companies, Contributions < 250000),
                   aes(Contributions, y = Company, label = Company),
                   hjust = 0, nudge_x = 4000, color = "grey40", bg.color = "grey98",
