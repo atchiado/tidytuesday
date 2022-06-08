@@ -16,7 +16,7 @@ static_list <- tuesdata$static_list
 top_companies <- static_list %>%
                    rename(Contributions = 'Amount Contributed Across States',
                           Pride = 'Pride?') %>% 
-                   subset(Contributions >= 45000 & Company!="Grand Total")
+                   subset(Contributions >= 70000 & Company!="Grand Total")
 
 
 ## Create viz ---------------
@@ -24,20 +24,39 @@ top_companies <- static_list %>%
 theme_set(theme_minimal(base_family = "Lato"))
 
 theme_update(axis.title = element_blank(),
-             axis.text = element_text(color = "grey40"),
              plot.background = element_rect(fill = "grey98", color = "grey98"),
              panel.background = element_rect(fill = "grey98", color = "grey98"),
              panel.grid.major.x = element_line(color = "grey80", size = 0.3),
+             panel.grid.minor.x = element_blank(),
+             panel.grid.major.y = element_blank(),
              axis.ticks.length = unit(0, "mm"),
              axis.line.y.left = element_line(color = "black"),
              axis.text.y = element_blank(),
-             axis.text.x = element_text(family = "Lato", size = 16))
+             axis.text.x = element_text(family = "Lato", size = 6),
+             plot.margin = margin(10, 40, 20, 40),
+             plot.title = element_text(color = "grey10", size = 25, face = "bold",
+                                       margin = margin(t = 15)),
+             plot.subtitle = element_markdown(color = "grey30", size = 12, lineheight = 1.35,
+                                              margin = margin(t = 10, b = 30)),
+             plot.title.position = "plot",
+             plot.caption.position = "plot",
+             plot.caption = element_text(color = "grey30", size = 11, lineheight = 1.2, 
+                                         hjust = 0, margin = margin(t = 20)))
   
 # Plot data
 ggplot(top_companies, aes(Contributions, Company)) +
   geom_col(width = 0.6) +
-  scale_x_continuous(limits = c(0, 601500),
-                     breaks = seq(0, 601500, by = 1000), 
-                     expand = c(0, 0),
-                     position = "top") +
-  scale_y_discrete(expand = expansion(add = c(0, 0.5)))
+  scale_x_continuous(limits = c(0, 650000), breaks = seq(0, 650000, by = 50000), 
+                     expand = c(0, 0), position = "top") +
+  scale_y_discrete(expand = expansion(add = c(0, 0.5))) +
+  geom_shadowtext(data = subset(top_companies, Contributions < 250000),
+                  aes(Contributions, y = Company, label = Company),
+                  hjust = 0, nudge_x = 4000, color = "grey40", bg.color = "grey98",
+                  bg.r = 0.5, family = "Lato", size = 4) + 
+  geom_text(data = subset(top_companies, Contributions >= 250000),
+            aes(0, y = Company, label = Company), hjust = 0, nudge_x = 4000,
+            color = "white", family = "Lato", size = 4) +
+  labs(title = "Rainbow Capitalism",
+       subtitle = "Graph depicts the top donators to anti-LGBTQ politicians by Pride-supporting and non Pride-supporting companies",
+       caption = "Visualization: Anthony Chiado  •  Data: Data For Progress  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
+  
