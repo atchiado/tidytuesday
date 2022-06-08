@@ -1,7 +1,6 @@
 library(tidyverse)
 library(tidytuesdayR)
 library(ggtext)
-library(ggrepel)
 library(grid)
 library(shadowtext)
 library(showtext)
@@ -21,9 +20,17 @@ top_companies <- static_list %>%
                           Pride = 'Pride?') %>% 
                    subset(Contributions >= 70000 & Company!="Grand Total")
 
+# Define pride companies to be highlighted on graph
+highlights <- c("Toyota", "AT&T", "Comcast", "Amazon", "FedEx", "State Farm")
+
+# Create group column to identify highlighted vars
+grouped_companies <- top_companies %>%
+                       mutate(group = if_else(Company %in% highlights, Company, "other"),
+                              group = as.factor(group))
+
 # Order data decreasing by contribution amount
-top_companies$Company <- factor(top_companies$Company,
-                                levels = top_companies$Company[order(top_companies$Contributions)])
+grouped_companies$Company <- factor(top_companies$Company,
+                                    levels = top_companies$Company[order(top_companies$Contributions)])
 
 
 ## Create viz ---------------
