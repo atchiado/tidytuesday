@@ -21,7 +21,7 @@ drought_tbl <- drought %>%
          state = str_to_title(state)) %>%
   pivot_longer(cols = c(d0:w4), names_to = "Code", values_to = "Value") %>%
   select(-x0) %>%
-  filter(Value != 0, Code  != "x9") %>%
+  filter(Code  != "x9") %>%
   mutate(Level = case_when(Code == "d4" ~ "Exceptional Dry",
                            Code == "d3" ~ "Extreme Dry",
                            Code == "d2" ~ "Severe Dry",
@@ -33,7 +33,20 @@ drought_tbl <- drought %>%
                            Code == "w3" ~ "Extreme Wet",
                            Code == "w4" ~ "Exceptional Wet")) %>%
   mutate(Condition = if_else(Level %in% c("Abnormally Wet", "Moderate Wet", "Severe Wet",
-                                          "Extreme Wet", "Exceptional Wet"), "Wet", "Dry"))
+                                          "Extreme Wet", "Exceptional Wet"), "Wet", "Dry")) %>%
+  mutate(fill = case_when(Level == "Exceptional Dry" ~ "#C7EF34FF",
+                          Level == "Extreme Dry" ~ "#FABA39FF",
+                          Level == "Severe Dry" ~ "#F66B19FF",
+                          Level == "Moderate Dry" ~ "#CB2A04FF",
+                          Level == "Abnormally Dry" ~ "#7A0403FF",
+                          Level == "Abnormally Wet" ~ "#36AAF9FF",
+                          Level == "Moderate Wet" ~ "#1AE4B6FF",
+                          Level == "Severe Wet" ~ "#30123BFF",
+                          Level == "Extreme Wet" ~ "#4662D7FF",
+                          Level == "Exceptional Wet" ~ "#72FE5EFF"))
+
+utah_tbl = filter(drought_tbl, state == "Utah")
+  
 
 
 ## Create viz
@@ -62,3 +75,16 @@ theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold
              legend.key.height = unit(.25, "lines"),
              legend.key.width = unit(2.5, "lines"),
              plot.margin = margin(rep(20, 4)))
+
+# Define color palette
+palette <- c("#FFB400", lighten("#FFB400", .25, space = "HLS"),
+             "#C20008", lighten("#C20008", .2, space = "HLS"),
+             "#13AFEF", lighten("#13AFEF", .25, space = "HLS"),
+             "#8E038E", lighten("#8E038E", .2, space = "HLS"),
+             "#595A52", lighten("#595A52", .15, space = "HLS"))
+
+# Plot data
+ggplot(utah_tbl, aes(x = date, y = Value, fill = Level)) +
+  geom_stream()
+  block
+  
