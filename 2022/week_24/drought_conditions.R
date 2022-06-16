@@ -6,6 +6,7 @@ library(colorspace)
 library(ggtext)
 library(cowplot)
 library(janitor)
+library(plyr)
 
 ## Load data
 tuesdata <- tidytuesdayR::tt_load(2022, week = 24)
@@ -15,8 +16,8 @@ drought <- tuesdata$drought
 ## Clean data
 drought_tbl <- drought %>%
   clean_names() %>%
-  mutate(date = str_remove(date, "^d_"),
-         date = as.Date(date, format = "%Y%m%d"),
+  mutate(date = substr(date, 3, 6),
+         date = as.numeric(date),
          state = str_replace(state, "-", " "),
          state = str_to_title(state)) %>%
   pivot_longer(cols = c(d0:w4), names_to = "Code", values_to = "Value") %>%
@@ -86,5 +87,4 @@ palette <- c("#FFB400", lighten("#FFB400", .25, space = "HLS"),
 # Plot data
 ggplot(utah_tbl, aes(x = date, y = Value, fill = Level)) +
   geom_stream()
-  block
   
