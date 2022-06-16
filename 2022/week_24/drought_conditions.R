@@ -6,7 +6,6 @@ library(colorspace)
 library(ggtext)
 library(cowplot)
 library(janitor)
-library(plyr)
 
 ## Load data
 tuesdata <- tidytuesdayR::tt_load(2022, week = 24)
