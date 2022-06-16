@@ -4,8 +4,14 @@ library(fuzzyjoin)
 library(ggstream)
 library(colorspace)
 library(ggtext)
+library(grid)
+library(shadowtext)
+library(showtext)
 library(cowplot)
 library(janitor)
+font_add_google("Lato")
+showtext_auto()
+
 
 ## Load data
 tuesdata <- tidytuesdayR::tt_load(2022, week = 24)
@@ -55,13 +61,12 @@ drought_tbl <- drought %>%
                           Level == "Extreme Wet" ~ "#4662D7FF",
                           Level == "Exceptional Wet" ~ "#72FE5EFF"))
 
-utah_tbl = filter(drought_tbl, state == "Utah", date >= 2000)
-utah_tbl$date = as.numeric(utah_tbl$date)
-utah_tbl$Level <- ordered(utah_tbl$Level, levels = c("Exceptional Dry", "Extreme Dry", "Severe Dry",
+stream_tbl = filter(drought_tbl, state == c("Utah", "California", "Nevada"), date >= 1922)
+stream_tbl$date = as.numeric(stream_tbl$date)
+stream_tbl$Level <- ordered(stream_tbl$Level, levels = c("Exceptional Dry", "Extreme Dry", "Severe Dry",
                                                      "Moderate Dry", "Abnormally Dry",
                                                      "Abnormally Wet", "Moderate Wet", "Severe Wet",
                                                      "Extreme Wet", "Exceptional Wet"))
-  
 
 
 ## Create viz
@@ -78,9 +83,7 @@ theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold
              axis.text.y = element_blank(),
              plot.background = element_rect(fill = "grey98", color = "grey98"),
              panel.background = element_rect(fill = "grey98", color = "grey98"),
-             panel.grid.major.x = element_line(color = "grey80", size = 0.3),
-             panel.grid.minor.x = element_blank(),
-             panel.grid.major.y = element_blank(),
+             panel.grid = element_blank(),
              panel.spacing.y = unit(0, "lines"),
              strip.text.y = element_blank(),
              legend.position = "bottom",
@@ -99,6 +102,8 @@ palette <- c("#FFB400", lighten("#FFB400", .25, space = "HLS"),
              "#595A52", lighten("#595A52", .15, space = "HLS"))
 
 # Plot data
-ggplot(utah_tbl, aes(x = date, y = Value, fill = Level)) +
-  geom_stream()
+ggplot(stream_tbl, aes(x = date, y = Value, fill = Level)) +
+  geom_stream(geom = "contour", color = "white", size = 1.25, bw = .45) +
+  geom_stream(geom = "polygon", bw = .45, size = 0) +
+  facet_grid(state ~ ., scales = "free_y", space = "free")
   
