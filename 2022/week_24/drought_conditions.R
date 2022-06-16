@@ -17,9 +17,23 @@ drought <- tuesdata$drought
 drought_tbl <- drought %>%
   clean_names() %>%
   mutate(date = substr(date, 3, 6),
-         date = as.numeric(date),
          state = str_replace(state, "-", " "),
          state = str_to_title(state)) %>%
+  aggregate(cbind(x0, d0, d1, d2, d3, d4, x9, w0, w1, w2, w3, w4) ~ date + state, mean)
+  
+  group_by(date, state) %>%
+  summarise(x0 = mean(x0),
+            d0 = mean(d0),
+            d1 = mean(d1),
+            d2 = mean(d2),
+            d3 = mean(d3),
+            d4 = mean(d4),
+            x9 = mean(x9),
+            w0 = mean(w0),
+            w1 = mean(w1),
+            w2 = mean(w2),
+            w3 = mean(w3),
+            w4 = mean(w4)) %>%
   pivot_longer(cols = c(d0:w4), names_to = "Code", values_to = "Value") %>%
   select(-x0) %>%
   filter(Code  != "x9") %>%
