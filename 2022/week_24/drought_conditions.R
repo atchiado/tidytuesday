@@ -49,19 +49,9 @@ drought_tbl <- drought %>%
                            Code == "w3" ~ "Extreme Wet",
                            Code == "w4" ~ "Exceptional Wet")) %>%
   mutate(Condition = if_else(Level %in% c("Abnormally Wet", "Moderate Wet", "Severe Wet",
-                                          "Extreme Wet", "Exceptional Wet"), "Wet", "Dry")) %>%
-  mutate(fill = case_when(Level == "Exceptional Dry" ~ "#C7EF34FF",
-                          Level == "Extreme Dry" ~ "#FABA39FF",
-                          Level == "Severe Dry" ~ "#F66B19FF",
-                          Level == "Moderate Dry" ~ "#CB2A04FF",
-                          Level == "Abnormally Dry" ~ "#7A0403FF",
-                          Level == "Abnormally Wet" ~ "#36AAF9FF",
-                          Level == "Moderate Wet" ~ "#1AE4B6FF",
-                          Level == "Severe Wet" ~ "#30123BFF",
-                          Level == "Extreme Wet" ~ "#4662D7FF",
-                          Level == "Exceptional Wet" ~ "#72FE5EFF"))
+                                          "Extreme Wet", "Exceptional Wet"), "Wet", "Dry"))
 
-stream_tbl = filter(drought_tbl, state == c("Utah", "California", "Nevada"), date >= 1922)
+stream_tbl = filter(drought_tbl, state == c("California", "Utah", "Arizona", "Nevada"), date >= 1972)
 stream_tbl$date = as.numeric(stream_tbl$date)
 stream_tbl$Level <- ordered(stream_tbl$Level, levels = c("Exceptional Dry", "Extreme Dry", "Severe Dry",
                                                      "Moderate Dry", "Abnormally Dry",
@@ -95,15 +85,12 @@ theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold
              plot.margin = margin(rep(20, 4)))
 
 # Define color palette
-palette <- c("#FFB400", lighten("#FFB400", .25, space = "HLS"),
-             "#C20008", lighten("#C20008", .2, space = "HLS"),
-             "#13AFEF", lighten("#13AFEF", .25, space = "HLS"),
-             "#8E038E", lighten("#8E038E", .2, space = "HLS"),
-             "#595A52", lighten("#595A52", .15, space = "HLS"))
+palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#EFE350FF", 
+             "#95D840FF", "#29AF7FFF", "#30123BFF", "#404788FF", "#481567FF")
 
 # Plot data
 ggplot(stream_tbl, aes(x = date, y = Value, fill = Level)) +
-  geom_stream(geom = "contour", color = "white", size = 1.25, bw = .45) +
-  geom_stream(geom = "polygon", bw = .45, size = 0) +
+  geom_stream(type = "proportional") +
+  scale_fill_manual(values = palette) +
   facet_grid(state ~ ., scales = "free_y", space = "free")
   
