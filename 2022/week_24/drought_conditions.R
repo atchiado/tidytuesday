@@ -94,7 +94,7 @@ theme_update(axis.title = element_blank(),
 
 # Define color palette
 palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#EFE350FF", 
-             "#481567FF", "#404788FF", "#30123BFF", "#29AF7FFF", "#95D840FF")
+             "#440154FF", "#453781FF", "#287D8EFF", "#3CBB75FF", "#DCE319FF")
 
 levels <- c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah")
 labels <- tibble(date = 1987.2, value = 0,
