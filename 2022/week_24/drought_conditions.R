@@ -67,13 +67,7 @@ stream_tbl$Level <- ordered(stream_tbl$Level, levels = c("Exceptional Dry", "Ext
 # Set theme
 theme_set(theme_minimal(base_family = "Lato", base_size = 12))
 
-theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold",
-                                       margin = margin(t = 15)),
-             plot.subtitle = element_text(color = "grey30", size = 12, lineheight = 1.35,
-                                              margin = margin(t = 10, b = 20)),
-             plot.caption = element_text(color = "grey30", size = 8, lineheight = 1.2, 
-                                         hjust = 0, margin = margin(t = 20)),
-             axis.title = element_blank(),
+theme_update(axis.title = element_blank(),
              axis.ticks = element_line(color = "grey70", size = .5),
              axis.ticks.length.y = unit(0, "lines"),
              axis.ticks.length.x = unit(0.4, "lines"),
@@ -88,7 +82,15 @@ theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold
              legend.background = element_rect(color = "grey40", size = .3, fill = "grey95"),
              legend.key.height = unit(.25, "lines"),
              legend.key.width = unit(2.5, "lines"),
-             plot.margin = margin(rep(20, 4)))
+             plot.margin = margin(10, 40, 20, 40),
+             plot.title = element_text(color = "grey10", size = 25, face = "bold",
+                                       margin = margin(t = 15)),
+             plot.subtitle = element_text(color = "grey30", size = 12, lineheight = 1.35,
+                                              margin = margin(t = 10, b = 20)),
+             plot.title.position = "plot",
+             plot.caption.position = "plot",
+             plot.caption = element_text(color = "grey30", size = 8, lineheight = 1.2, 
+                                         hjust = 0, margin = margin(t = 20)))
 
 # Define color palette
 palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#EFE350FF", 
@@ -107,5 +109,9 @@ ggplot(stream_tbl, aes(x = date, y = mean, fill = Level)) +
   scale_x_continuous(breaks = seq(1990, 2020, 5)) +
   geom_text(data = labels, aes(date, value, label = label), family = "Lato", inherit.aes = FALSE,
             size = 4, color = "grey30", lineheight = .85, hjust = 0) +
-  facet_grid(state ~ ., scales = "free_y", space = "free")
+  facet_grid(state ~ ., scales = "free_y", space = "free") +
+  labs(title = "Historical Drought Conditions (1990-2022)",
+       subtitle = "Graph depicts historical trends of drought conditions for the six states in the contiguous U.S. with the driest and wettest conditions on average.",
+       caption = "Visualization: Anthony Chiado  •  Data: US National Integrated Drought Information System  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
+  
   
