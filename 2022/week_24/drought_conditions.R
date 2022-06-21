@@ -13,12 +13,12 @@ font_add_google("Lato")
 showtext_auto()
 
 
-## Load data
+## Load data ---------------
 tuesdata <- tidytuesdayR::tt_load(2022, week = 24)
 drought <- tuesdata$drought
 
 
-## Clean data
+## Clean data ---------------
 drought_tbl <- drought %>%
   clean_names() %>%
   mutate(date = substr(date, 3, 6),
@@ -54,6 +54,7 @@ drought_tbl <- drought %>%
   mutate(mean = mean(Value, na.rm = TRUE)) %>%
   mutate(mean = case_when(Code %in% c("w0", "w1", "w2", "w3", "w4") ~ -mean, TRUE ~ mean))
 
+# Subset data for use in viz
 stream_tbl = filter(drought_tbl,
                     state %in% c("Utah", "Arizona", "Nevada", "Alabama", "Louisiana", "Mississippi") &date >= 1990)
 stream_tbl$date = as.numeric(stream_tbl$date)
@@ -63,7 +64,7 @@ stream_tbl$Level <- ordered(stream_tbl$Level, levels = c("Exceptional Dry", "Ext
                                                          "Moderate Wet", "Abnormally Wet"))
 
 
-## Create viz
+## Create viz ---------------
 # Set theme
 theme_set(theme_minimal(base_family = "Lato", base_size = 12))
 
@@ -79,13 +80,13 @@ theme_update(axis.title = element_blank(),
              axis.text.y = element_blank(),
              legend.position = "bottom",
              legend.text = element_text(size = 9, color = "grey40"),
-             legend.box.margin = margin(t = 30),
+             legend.box.margin = margin(t = 12),
              legend.background = element_rect(color = "grey40", size = .3, fill = "grey95"),
              legend.key.height = unit(.25, "lines"),
              legend.key.width = unit(2.5, "lines"),
              plot.margin = margin(10, 40, 20, 3),
              plot.title = element_text(color = "grey10", size = 25, face = "bold",
-                                       hjust = 0.045, margin = margin(t = 15)),
+                                       hjust = 0.046, margin = margin(t = 15)),
              plot.subtitle = element_text(color = "grey30", size = 11, lineheight = 1.35,
                                           hjust = 0.09, margin = margin(t = 10, b = 20)),
              plot.title.position = "plot",
@@ -97,11 +98,11 @@ theme_update(axis.title = element_blank(),
 palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#C7EF34FF",
              "#30123BFF", "#4662D7FF", "#36AAF9FF", "#1AE4B6FF", "#72FE5EFF")
 
+# Define state labels for y-axis
 levels <- c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah")
 labels <- tibble(date = 1987.2, value = 0,
                  state = factor(levels, levels = levels),
                  label = c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah"))
-
 
 # Plot data
 ggplot(stream_tbl, aes(x = date, y = mean, fill = Level)) +
@@ -117,5 +118,4 @@ ggplot(stream_tbl, aes(x = date, y = mean, fill = Level)) +
       from 1 to 72 months, for the lower 48 U.S. states. The SPI is the number of standard deviations that observed cumulative precipitation deviates from the climatological
  average. NOAA's National Centers for Environmental Information produce the 9-month SPI values below on a monthly basis, going back to 1895.",
        caption = "Visualization: Anthony Chiado  •  Data: US National Integrated Drought Information System  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
-  
   
