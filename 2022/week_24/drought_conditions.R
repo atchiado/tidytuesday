@@ -76,6 +76,7 @@ theme_update(axis.title = element_blank(),
              panel.grid = element_blank(),
              panel.spacing.y = unit(0, "lines"),
              strip.text.y = element_blank(),
+             axis.text.y = element_blank(),
              legend.position = "bottom",
              legend.text = element_text(size = 9, color = "grey40"),
              legend.box.margin = margin(t = 30),
@@ -93,8 +94,8 @@ theme_update(axis.title = element_blank(),
                                          hjust = 0.07, margin = margin(t = 20)))
 
 # Define color palette
-palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#EFE350FF", 
-             "#440154FF", "#453781FF", "#287D8EFF", "#3CBB75FF", "#DCE319FF")
+palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#C7EF34FF",
+             "#30123BFF", "#4662D7FF", "#36AAF9FF", "#1AE4B6FF", "#72FE5EFF")
 
 levels <- c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah")
 labels <- tibble(date = 1987.2, value = 0,
