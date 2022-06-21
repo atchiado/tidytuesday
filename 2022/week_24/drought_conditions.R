@@ -49,14 +49,18 @@ drought_tbl <- drought %>%
                            Code == "w3" ~ "Extreme Wet",
                            Code == "w4" ~ "Exceptional Wet")) %>%
   mutate(Condition = if_else(Level %in% c("Abnormally Wet", "Moderate Wet", "Severe Wet",
-                                          "Extreme Wet", "Exceptional Wet"), "Wet", "Dry"))
+                                          "Extreme Wet", "Exceptional Wet"), "Wet", "Dry")) %>%
+  group_by(date, state, Code) %>%
+  mutate(mean = mean(Value, na.rm = TRUE)) %>%
+  mutate(mean = case_when(Code %in% c("w0", "w1", "w2", "w3", "w4") ~ -mean, TRUE ~ mean))
 
-stream_tbl = filter(drought_tbl, state == c("California", "Utah", "Arizona", "Nevada"), date >= 1972)
+stream_tbl = filter(drought_tbl,
+                    state %in% c("Utah", "Arizona", "Nevada", "Alabama", "Louisiana", "Mississippi") &date >= 1990)
 stream_tbl$date = as.numeric(stream_tbl$date)
 stream_tbl$Level <- ordered(stream_tbl$Level, levels = c("Exceptional Dry", "Extreme Dry", "Severe Dry",
-                                                     "Moderate Dry", "Abnormally Dry",
-                                                     "Abnormally Wet", "Moderate Wet", "Severe Wet",
-                                                     "Extreme Wet", "Exceptional Wet"))
+                                                         "Moderate Dry", "Abnormally Dry",
+                                                         "Exceptional Wet", "Extreme Wet", "Severe Wet",
+                                                         "Moderate Wet", "Abnormally Wet"))
 
 
 ## Create viz
@@ -70,7 +74,9 @@ theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold
              plot.caption = element_text(color = "grey30", size = 8, lineheight = 1.2, 
                                          hjust = 0, margin = margin(t = 20)),
              axis.title = element_blank(),
-             axis.text.y = element_blank(),
+             axis.ticks = element_line(color = "grey70", size = .5),
+             axis.ticks.length.y = unit(0, "lines"),
+             axis.ticks.length.x = unit(0.4, "lines"),
              plot.background = element_rect(fill = "grey98", color = "grey98"),
              panel.background = element_rect(fill = "grey98", color = "grey98"),
              panel.grid = element_blank(),
@@ -86,11 +92,20 @@ theme_update(plot.title = element_text(color = "grey10", size = 25, face = "bold
 
 # Define color palette
 palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#EFE350FF", 
-             "#95D840FF", "#29AF7FFF", "#30123BFF", "#404788FF", "#481567FF")
+             "#481567FF", "#404788FF", "#30123BFF", "#29AF7FFF", "#95D840FF")
+
+levels <- c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah")
+labels <- tibble(date = 1987.2, value = 0,
+                 state = factor(levels, levels = levels),
+                 label = c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah"))
+
 
 # Plot data
-ggplot(stream_tbl, aes(x = date, y = Value, fill = Level)) +
-  geom_stream(type = "proportional") +
+ggplot(stream_tbl, aes(x = date, y = mean, fill = Level)) +
+  geom_area() +
   scale_fill_manual(values = palette) +
+  scale_x_continuous(breaks = seq(1990, 2020, 5)) +
+  geom_text(data = labels, aes(date, value, label = label), family = "Lato", inherit.aes = FALSE,
+            size = 4, color = "grey30", lineheight = .85, hjust = 0) +
   facet_grid(state ~ ., scales = "free_y", space = "free")
   
