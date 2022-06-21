@@ -82,15 +82,15 @@ theme_update(axis.title = element_blank(),
              legend.background = element_rect(color = "grey40", size = .3, fill = "grey95"),
              legend.key.height = unit(.25, "lines"),
              legend.key.width = unit(2.5, "lines"),
-             plot.margin = margin(10, 40, 20, 40),
+             plot.margin = margin(10, 40, 20, 3),
              plot.title = element_text(color = "grey10", size = 25, face = "bold",
-                                       margin = margin(t = 15)),
+                                       hjust = 0.045, margin = margin(t = 15)),
              plot.subtitle = element_text(color = "grey30", size = 12, lineheight = 1.35,
-                                              margin = margin(t = 10, b = 20)),
+                                          hjust = 0.12, margin = margin(t = 15, b = 20)),
              plot.title.position = "plot",
              plot.caption.position = "plot",
              plot.caption = element_text(color = "grey30", size = 8, lineheight = 1.2, 
-                                         hjust = 0, margin = margin(t = 20)))
+                                         hjust = 0.07, margin = margin(t = 20)))
 
 # Define color palette
 palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#EFE350FF", 
