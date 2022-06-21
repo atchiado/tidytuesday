@@ -86,11 +86,11 @@ theme_update(axis.title = element_blank(),
              plot.margin = margin(10, 40, 20, 3),
              plot.title = element_text(color = "grey10", size = 25, face = "bold",
                                        hjust = 0.045, margin = margin(t = 15)),
-             plot.subtitle = element_text(color = "grey30", size = 12, lineheight = 1.35,
-                                          hjust = 0.12, margin = margin(t = 15, b = 20)),
+             plot.subtitle = element_text(color = "grey30", size = 11, lineheight = 1.35,
+                                          hjust = 0.09, margin = margin(t = 10, b = 20)),
              plot.title.position = "plot",
              plot.caption.position = "plot",
-             plot.caption = element_text(color = "grey30", size = 8, lineheight = 1.2, 
+             plot.caption = element_text(color = "grey30", size = 9, lineheight = 1.2, 
                                          hjust = 0.07, margin = margin(t = 20)))
 
 # Define color palette
@@ -112,7 +112,10 @@ ggplot(stream_tbl, aes(x = date, y = mean, fill = Level)) +
             size = 4, color = "grey30", lineheight = .85, hjust = 0) +
   facet_grid(state ~ ., scales = "free_y", space = "free") +
   labs(title = "Historical Drought Conditions (1990-2022)",
-       subtitle = "Graph depicts historical trends of drought conditions for the six states in the contiguous U.S. with the driest and wettest conditions on average.",
+       subtitle = "Graph depicts historical trends of drought conditions for the six states in the contiguous U.S. with the driest and wettest conditions on average.
+     The 10 categorizations are determined by the Standardized Precipitation Index (SPI), which characterizes meteorological drought on a range of timescales, ranging
+      from 1 to 72 months, for the lower 48 U.S. states. The SPI is the number of standard deviations that observed cumulative precipitation deviates from the climatological
+ average. NOAA's National Centers for Environmental Information produce the 9-month SPI values below on a monthly basis, going back to 1895.",
        caption = "Visualization: Anthony Chiado  •  Data: US National Integrated Drought Information System  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
   
   
