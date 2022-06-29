@@ -11,10 +11,12 @@ paygap <- tuesdata$paygap
 
 
 ## Data cleaning ---------------
+# Select universities to be displayed in the graph
 school_names <- c("Durham University", "Imperial College London", "King's College London",
                   "THE UNIVERSITY OF MANCHESTER", "University of Cambridge", "University of London",
                   "University of Oxford", "University of St Andrews", "University of York")
 
+# Wrangle data to tidy format
 pay_data <- paygap %>%
   filter(employer_name %in% school_names) %>%
   select(employer_name, male_lower_quartile, female_lower_quartile,
@@ -27,11 +29,13 @@ pay_data <- paygap %>%
   group_by(employer_name, gender, quartile) %>% 
   summarise(proportion = mean(proportion))
 
+# Order quartile factor levels
 pay_data$quartile <- as.factor(pay_data$quartile)
 pay_data$quartile <- factor(pay_data$quartile, levels = c("lower_quartile", "lower_middle_quartile",
                                                           "upper_middle_quartile", "top_quartile"))
 levels(pay_data$quartile) <- c("Bottom", "Lower Middle", "Upper Middle", "Top")
 
+# Case correction for some variables
 pay_data$employer_name <- recode(pay_data$employer_name,
                                  "THE UNIVERSITY OF MANCHESTER" = "The University of Manchester")
 pay_data$gender <- str_to_title(pay_data$gender)
@@ -84,5 +88,3 @@ ggplot(pay_data, aes(x = quartile, y = proportion * 100, fill = gender)) +
        subtitle = "The graph depicts the proportions of male and female university employees that make up each of four salary quartiles. In general, although most universities\nemploy more females than males, male employees make up a comparatively greater proportion of the upper quartiles, while female employees make up a\ncomparatively greater proportion of the lower quartiles. The data source tracks salaries in the United Kingdom from 2018-2022.",
        caption = "Visualization: Anthony Chiado  •  Data: UK Government's Gender Pay Gap Service  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
   
-
-                    
