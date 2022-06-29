@@ -61,8 +61,7 @@ theme_update(axis.title = element_blank(),
              plot.title.position = "plot",
              plot.caption.position = "plot",
              plot.caption = element_text(family = "Lato", color = "grey30", size = 8, lineheight = 1.2, 
-                                         hjust = 0, margin = margin(t = 20)),
-             legend.position = "none")
+                                         hjust = 0, margin = margin(t = 20)))
 
 # Set x axis labels
 quartile_labs <- c("Bottom\nQuartile", "Lower\nMiddle\nQuartile",
@@ -76,7 +75,7 @@ ggplot(pay_data, aes(x = quartile, y = proportion * 100, fill = gender)) +
   scale_x_discrete(labels = quartile_labs) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs(title = "The Gender Pay Gap at Prominent British Universities",
-       subtitle = "Graph depicts the proportions of male and female university employees that fall into four salary quartiles. The data\ntracks salaries from 2018-2022. In general, male employees make up a greater proportion of the upper quartiles, while female\nemployees make up a greater proportion of the lower quartiles.",
+       subtitle = "Graph depicts the proportions of male and female university employees that make up each of four salary quartiles. In general, male employees make\nup a greater proportion of the upper quartiles, while female employees make up a greater proportion of the lower quartiles. The data source tracks\nsalaries across employers in the United Kingdom from 2018-2022",
        caption = "Visualization: Anthony Chiado  •  Data: UK Government's Gender Pay Gap Service  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
   
 
