@@ -1,4 +1,9 @@
 library(tidyverse)
+library(ggtext)
+library(tools)
+library(showtext)
+font_add_google("Lato")
+showtext_auto()
 
 ## Load data ---------------
 tuesdata <- tidytuesdayR::tt_load(2022, week = 26)
@@ -6,29 +11,42 @@ paygap <- tuesdata$paygap
 
 
 ## Data cleaning ---------------
-school_ids <- c("13185", "15943", "13172", "14396", "6539", "296", "12620", "12943", "14890")
+school_names <- c("Durham University", "Imperial College London", "King's College London",
+                  "THE UNIVERSITY OF MANCHESTER", "Trinity College", "University of Cambridge",
+                  "University of London", "University of Oxford", "University of York")
 
 pay_data <- paygap %>%
-  filter(employer_id %in% school_ids) %>%
-  select(employer_name, employer_id, diff_mean_hourly_percent, diff_median_hourly_percent,
-         diff_mean_bonus_percent, diff_median_bonus_percent, male_bonus_percent,
-         female_bonus_percent, male_lower_quartile, female_lower_quartile,
+  filter(employer_name %in% school_names) %>%
+  select(employer_name, male_lower_quartile, female_lower_quartile,
          male_lower_middle_quartile,female_lower_middle_quartile, male_upper_middle_quartile,
-         female_upper_middle_quartile, male_top_quartile, female_top_quartile, date_submitted)
+         female_upper_middle_quartile, male_top_quartile, female_top_quartile) %>%
+  pivot_longer(cols = male_lower_quartile:female_top_quartile,
+               names_to = c("gender", "quartile"),
+               names_pattern = "(.*?)_(.*)",
+               values_to = "proportion") %>%
+  group_by(employer_name, gender, quartile) %>% 
+  summarise(proportion = mean(proportion))
+
+pay_data$quartile <- as.factor(pay_data$quartile)
+pay_data$quartile <- factor(pay_data$quartile, levels = c("lower_quartile", "lower_middle_quartile",
+                                                          "upper_middle_quartile", "top_quartile"))
+levels(pay_data$quartile) <- c("Bottom", "Lower Middle", "Upper Middle", "Top")
+
+pay_data$employer_name <- str_to_title(pay_data$employer_name)
 
 
 ## Data viz ---------------
 # Set theme
-theme_set(theme_minimal(base_family = "Lato"))
-
 theme_update(axis.title = element_blank(),
              plot.background = element_rect(fill = "grey98", color = "grey98"),
              panel.background = element_rect(fill = "grey98", color = "grey98"),
-             panel.grid.major.x = element_line(color = "grey80", size = 0.3),
+             panel.grid.major.x = element_blank(),
              panel.grid.minor.x = element_blank(),
              panel.grid.major.y = element_blank(),
-             axis.ticks.length = unit(0, "mm"),
-             axis.line.y.left = element_line(color = "grey30"),
+             panel.grid.minor.y = element_blank(),
+             axis.line.y.left = element_blank(),
+             panel.spacing.x = unit(1, "cm" ),
+             panel.spacing.y = unit(0.5, "cm" ),
              axis.text.y = element_blank(),
              axis.text.x = element_text(family = "Lato", size = 8),
              plot.margin = margin(10, 40, 20, 40),
@@ -43,5 +61,9 @@ theme_update(axis.title = element_blank(),
              legend.position = "none")
 
 # Plot data
-ggplot(pay_data, aes(x = Date, y = Weight, fill = Cultivar)) +
-  geom_col(position = "fill")
+ggplot(pay_data, aes(x = quartile, y = proportion, fill = gender)) +
+  geom_col(position = "fill") +
+  facet_wrap( ~ employer_name, ncol = 4) +
+  scale_fill_manual(values = c("male" = "#519481", "female" = "#e7b96e"))
+
+                    
