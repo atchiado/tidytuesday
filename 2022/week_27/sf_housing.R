@@ -4,6 +4,7 @@ library(showtext)
 library(sf)
 library(devtools)
 library(urbnmapr)
+library(MetBrewer)
 font_add_google("Lato")
 showtext_auto()
 
@@ -27,12 +28,10 @@ construction_data <- left_join(new_construction, county_data, by = c("county" = 
                      piece, state_abbv, state_fips, fips_class, state_name, mhproduction)) %>%
   rename("Single Family" = sf_rate,
          "Multi-family" = mf_rate) %>%
-  pivot_longer(cols = 'Single Family':"Multi-family",
+  pivot_longer(cols = 'Single Family':"Multi-Family",
                names_to = "construction_type",
                values_to = "production_rate") %>%
   filter(year > 2008)
-
-
 
 
 ## Create viz --------------------
@@ -47,15 +46,16 @@ theme_update(axis.title = element_blank(),
              axis.line.y.left = element_blank(),
              panel.spacing.x = unit(1, "cm" ),
              panel.spacing.y = unit(1, "cm" ),
-             axis.text.y = element_blank,
-             axis.text.x = element_blank,
+             axis.text.y = element_blank(),
+             axis.text.x = element_blank(),
              axis.ticks.x = element_blank(),
              axis.ticks.y = element_blank(),
-             strip.text = element_text(family = "Lato", size = 11, hjust = 0.5, color = "grey30"),
+             strip.text = element_text(family = "Lato", size = 12, face = "bold", hjust = 0.5, color = "grey30"),
              strip.background = element_rect(fill = "grey98"),
              legend.position = "bottom",
-             legend.title = element_blank(),
-             legend.text = element_text(family = "Lato", size = 10, face = "bold", color = "grey40"),
+             legend.background = element_rect(fill = "grey98"),
+             legend.title = element_text(size = 10, face = "bold", color = "grey30"),
+             legend.text = element_text(family = "Lato", size = 8, color = "grey30"),
              legend.margin = margin(t = 5),
              plot.margin = margin(10, 60, 20, 40),
              plot.title = element_text(family = "Lato", color = "grey10", size = 25, face = "bold",
@@ -69,8 +69,14 @@ theme_update(axis.title = element_blank(),
 
 # Plot data
 ggplot(construction_data, aes(long, lat, group = group, fill = production_rate)) +
-  geom_polygon(color = NA) +
+  geom_polygon(color = "grey20") +
   coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
   facet_wrap(~ construction_type) +
-  scale_fill_viridis(option = "inferno")
-  
+  scale_fill_viridis("Construction Rate", option = "inferno", labels = scales::percent) +
+  guides(fill = guide_colorbar(title.position = "top",
+                               barwidth = unit(100, units = "mm"),
+                               barheight = unit(3.5, unit = "mm"))) +
+  labs(title = "Bay Area Housing Development",
+       subtitle = "The graph depicts construction rates for single and multi-family housing by county in the San Francisco Bay Area. Rates indicate the\npercentage of total housing production for each county that is made up by each specific type of housing. Negative values indicate\nthat a given county reduced the amount of the specified type of housing over the evaluation period from 2008-2018.",
+       caption = "Visualization: Anthony Chiado  •  Data: data.sfgov.org & Kate Pennington  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
+
