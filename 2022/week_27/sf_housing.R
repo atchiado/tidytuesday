@@ -15,6 +15,62 @@ new_construction <- tuesdata$new_construction
 # Load county data for mapping
 county_data <- urbnmapr::counties
 
-# #Clean data --------------------
-construction_data <- left_join(new_construction, county_data, by = c("county" = "county_name"))
-                               
+
+## Clean data --------------------
+# Create new columns to specify production rates
+new_construction$sf_rate <- new_construction$sfproduction / new_construction$totalproduction
+new_construction$mf_rate <- new_construction$mfproduction / new_construction$totalproduction
+
+# Join to county_data to get coordinates and pivot production rates for facet wrapping
+construction_data <- left_join(new_construction, county_data, by = c("county" = "county_name")) %>%
+    subset(select = -c(cartodb_id, the_geom, the_geom_webmercator, source, order, hole,
+                     piece, state_abbv, state_fips, fips_class, state_name, mhproduction)) %>%
+  rename("Single Family" = sf_rate,
+         "Multi-family" = mf_rate) %>%
+  pivot_longer(cols = 'Single Family':"Multi-family",
+               names_to = "construction_type",
+               values_to = "production_rate") %>%
+  filter(year > 2008)
+
+
+
+
+## Create viz --------------------
+# Set theme
+theme_update(axis.title = element_blank(),
+             plot.background = element_rect(fill = "grey98", color = "grey98"),
+             panel.background = element_rect(fill = "grey98", color = "grey98"),
+             panel.grid.major.x = element_blank(),
+             panel.grid.minor.x = element_blank(),
+             panel.grid.major.y = element_blank(),
+             panel.grid.minor.y = element_blank(),
+             axis.line.y.left = element_blank(),
+             panel.spacing.x = unit(1, "cm" ),
+             panel.spacing.y = unit(1, "cm" ),
+             axis.text.y = element_blank,
+             axis.text.x = element_blank,
+             axis.ticks.x = element_blank(),
+             axis.ticks.y = element_blank(),
+             strip.text = element_text(family = "Lato", size = 11, hjust = 0.5, color = "grey30"),
+             strip.background = element_rect(fill = "grey98"),
+             legend.position = "bottom",
+             legend.title = element_blank(),
+             legend.text = element_text(family = "Lato", size = 10, face = "bold", color = "grey40"),
+             legend.margin = margin(t = 5),
+             plot.margin = margin(10, 60, 20, 40),
+             plot.title = element_text(family = "Lato", color = "grey10", size = 25, face = "bold",
+                                       margin = margin(t = 15)),
+             plot.subtitle = element_text(family = "Lato", color = "grey30", size = 12, lineheight = 1.35,
+                                              margin = margin(t = 10, b = 25)),
+             plot.title.position = "plot",
+             plot.caption.position = "plot",
+             plot.caption = element_text(family = "Lato", color = "grey30", size = 8, lineheight = 1.2, 
+                                         hjust = 0, margin = margin(t = 20)))
+
+# Plot data
+ggplot(construction_data, aes(long, lat, group = group, fill = production_rate)) +
+  geom_polygon(color = NA) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  facet_wrap(~ construction_type) +
+  scale_fill_viridis(option = "inferno")
+  
