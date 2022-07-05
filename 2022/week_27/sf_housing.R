@@ -2,15 +2,19 @@ library(tidyverse)
 library(ggtext)
 library(showtext)
 library(sf)
+library(devtools)
+library(urbnmapr)
 font_add_google("Lato")
 showtext_auto()
 
 
-# Load data ---------------
+## Load data --------------------
 tuesdata <- tidytuesdayR::tt_load(2022, week = 27)
-rent_data <- tuesdata$rent
-permit_data <- tuesdata$sf_permits
-construction_data <- tuesdata$new_construction
+new_construction <- tuesdata$new_construction
 
+# Load county data for mapping
+county_data <- urbnmapr::counties
 
-# 
+# #Clean data --------------------
+construction_data <- left_join(new_construction, county_data, by = c("county" = "county_name"))
+                               
