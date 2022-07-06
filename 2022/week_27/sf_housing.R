@@ -4,7 +4,8 @@ library(showtext)
 library(sf)
 library(devtools)
 library(urbnmapr)
-library(MetBrewer)
+library(viridis)
+library(ggrepel)
 font_add_google("Lato")
 showtext_auto()
 
@@ -24,11 +25,11 @@ new_construction$mf_rate <- new_construction$mfproduction / new_construction$tot
 
 # Join to county_data to get coordinates and pivot production rates for facet wrapping
 construction_data <- left_join(new_construction, county_data, by = c("county" = "county_name")) %>%
-    subset(select = -c(cartodb_id, the_geom, the_geom_webmercator, source, order, hole,
+  subset(select = -c(cartodb_id, the_geom, the_geom_webmercator, source, order, hole,
                      piece, state_abbv, state_fips, fips_class, state_name, mhproduction)) %>%
   rename("Single Family" = sf_rate,
          "Multi-family" = mf_rate) %>%
-  pivot_longer(cols = 'Single Family':"Multi-Family",
+  pivot_longer(cols = 'Single Family':"Multi-family",
                names_to = "construction_type",
                values_to = "production_rate") %>%
   filter(year > 2008)
