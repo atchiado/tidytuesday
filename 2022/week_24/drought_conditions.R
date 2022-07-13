@@ -56,7 +56,7 @@ drought_tbl <- drought %>%
 
 # Subset data for use in viz
 stream_tbl = filter(drought_tbl,
-                    state %in% c("Utah", "Arizona", "Nevada", "Alabama", "Louisiana", "Mississippi") &date >= 1990)
+                    state %in% c("Utah", "Arizona", "Nevada", "Alabama", "Louisiana", "Mississippi") & date >= 1990)
 stream_tbl$date = as.numeric(stream_tbl$date)
 stream_tbl$Level <- ordered(stream_tbl$Level, levels = c("Exceptional Dry", "Extreme Dry", "Severe Dry",
                                                          "Moderate Dry", "Abnormally Dry",
@@ -84,15 +84,15 @@ theme_update(axis.title = element_blank(),
              legend.background = element_rect(color = "grey40", size = .3, fill = "grey95"),
              legend.key.height = unit(.25, "lines"),
              legend.key.width = unit(2.5, "lines"),
-             plot.margin = margin(10, 40, 20, 3),
+             plot.margin = margin(10, 30, 20, 1),
              plot.title = element_text(color = "grey10", size = 25, face = "bold",
-                                       hjust = 0.046, margin = margin(t = 15)),
+                                       hjust = 0, margin = margin(t = 15)),
              plot.subtitle = element_text(color = "grey30", size = 11, lineheight = 1.35,
-                                          hjust = 0.2, margin = margin(t = 10, b = 20)),
+                                          hjust = 0, margin = margin(t = 10, b = 20)),
              plot.title.position = "plot",
              plot.caption.position = "plot",
              plot.caption = element_text(color = "grey30", size = 9, lineheight = 1.2, 
-                                         hjust = 0.07, margin = margin(t = 20)))
+                                         hjust = 0, margin = margin(t = 20)))
 
 # Define color palette
 palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#C7EF34FF",
@@ -100,7 +100,7 @@ palette <- c("#7A0403FF", "#CB2A04FF", "#F66B19FF", "#FABA39FF", "#C7EF34FF",
 
 # Define state labels for y-axis
 levels <- c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah")
-labels <- tibble(date = 1987.2, value = 0,
+labels <- tibble(date = 1987.5, value = 0,
                  state = factor(levels, levels = levels),
                  label = c("Alabama", "Arizona", "Louisiana", "Mississippi", "Nevada", "Utah"))
 
@@ -109,10 +109,10 @@ ggplot(stream_tbl, aes(x = date, y = mean, fill = Level)) +
   geom_area() +
   scale_fill_manual(values = palette) +
   scale_x_continuous(breaks = seq(1990, 2020, 5)) +
-  geom_text(data = labels, aes(date, value, label = label), family = "Lato", inherit.aes = FALSE,
-            size = 4, color = "grey30", lineheight = .85, hjust = 0) +
+  geom_text(data = labels, aes(date, value, label = label), family = "Lato", size = 4,
+            color = "grey30", lineheight = .85, hjust = 0) +
   facet_grid(state ~ ., scales = "free_y", space = "free") +
   labs(title = "Historical Drought Conditions (1990-2022)",
-       subtitle = "Graph depicts historical trends of drought conditions for the six states in the contiguous U.S. with the driest and wettest conditions on average. The 10 categorizations are \n determined by the Standardized Precipitation Index (SPI), which characterizes meteorological drought on a range of timescales, ranging from 1 to 72 months, for the lower 48 \n U.S. states. The SPI is the number of standard deviations that observed cumulative precipitation deviates from the climatological average. NOAA's National Centers for \n Environmental Information produce the 9-month SPI values below on a monthly basis, going back to 1895.",
+       subtitle = "Graph depicts historical trends of drought conditions for the six states in the contiguous U.S. with the driest and wettest conditions on average. The 10 categorizations are\ndetermined by the Standardized Precipitation Index (SPI), which characterizes meteorological drought on a range of timescales, ranging from 1 to 72 months, for the lower 48\nU.S. states. The SPI is the number of standard deviations that observed cumulative precipitation deviates from the climatological average. NOAA's National Centers for\nEnvironmental Information produce the 9-month SPI values below on a monthly basis, going back to 1895.",
        caption = "Visualization: Anthony Chiado  •  Data: US National Integrated Drought Information System  •  Code: atchiado/tidytuesday on GitHub  • Created for R4DS #tidytuesday")
   
