@@ -56,6 +56,7 @@ flight_data <- flights %>%
 
 # Order airports by recovery rate for viz
 flight_data$airport <- factor(flight_data$airport)
+flight_data
 flight_data$airport <- fct_reorder(flight_data$airport, -flight_data$recovery_rate)
     
 
